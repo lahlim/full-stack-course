@@ -45,8 +45,6 @@ const Statistics = ({ good, bad, neutral }) => {
           <tr><td>Positiivisia</td><td> {claculatePositive(good, neutral, bad)} %</td></tr>
         </tbody>
       </table>
-
-
     </>
   )
 
