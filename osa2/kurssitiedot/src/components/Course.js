@@ -10,11 +10,7 @@ const Course = ({ course }) => {
 };
 
 const Header = ({ name }) => {
-  return (
-    <div>
-      <h2>{name}</h2>
-    </div>
-  );
+  return <h2>{name}</h2>;
 };
 
 const Content = ({ parts }) => {
@@ -22,7 +18,7 @@ const Content = ({ parts }) => {
     .map(part => part.exercises)
     .reduce((total, exercises) => total + exercises);
   let combination = {
-    name: 'yhteensä',
+    name: 'Yhteensä',
     exercises: sum
   };
 
