@@ -3,6 +3,7 @@ import React from 'react';
 const Course = ({ course }) => {
   return (
     <>
+      <h1>Opetusohjelma</h1>
       <Header name={course.name} />
       <Content parts={course.parts} />
     </>
