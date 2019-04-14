@@ -26,7 +26,7 @@ const MostVotes = ({ anecdotes, votes }) => {
     }
   }
 
-  if(max === 0) return <h2>Vote for anecdote</h2>;
+  if (max === 0) return <h2>Vote for anecdote</h2>;
 
   return (
     <>
