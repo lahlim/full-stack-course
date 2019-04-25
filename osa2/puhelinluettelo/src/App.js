@@ -1,37 +1,67 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
+// filtering component
+const Filter = props => {
+  return (
+    <div>
+      rajaa näytettäviä: <input onChange={props.handleFilter} />
+    </div>
+  );
+};
+
+// person component
+const Person = ({ person }) => (
+  <p>
+    {person.name} {person.number}
+  </p>
+);
+
+// component for persons
+const Persons = ({ persons }) => {
+  const allPersons = persons.map(person => (
+    <Person key={person.name} person={person} />
+  ));
+  return allPersons;
+};
+
+// main component
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: "Arto Hellas", number: "040-123456" },
-    { name: "Martti Tienari", number: "040-123456" },
-    { name: "Arto Järvinen", number: "040-123456" },
-    { name: "Lea Kutvonen", number: "040-123456" }
+    { name: 'Arto Hellas', number: '040-123456' },
+    { name: 'Martti Tienari', number: '040-123456' },
+    { name: 'Arto Järvinen', number: '040-123456' },
+    { name: 'Lea Kutvonen', number: '040-123456' }
   ]);
-  const [newName, setNewName] = useState("");
-  const [newNumber, setNewNumber] = useState("");
-  const [newFilter, setNewFilter] = useState("");
+  const [newName, setNewName] = useState('');
+  const [newNumber, setNewNumber] = useState('');
+  const [show, setShow] = useState(persons);
 
+  // Compares imput of filter and filters matches to show
   const handleFilter = e => {
-    console.log(e.target.value);
-    setNewFilter(e.target.value);
+    const found = persons.filter(
+      person =>
+        person.name
+          .toLocaleLowerCase()
+          .indexOf(e.target.value.toLocaleLowerCase()) > -1
+    );
+    setShow(found);
   };
 
   // handles change of number input box
   const handleNameChange = event => {
-    console.log(event.target.value);
     setNewName(event.target.value);
   };
 
   // handles change of number input
   const handleNumberChange = event => {
-    console.log(event.target.value);
     setNewNumber(event.target.value);
   };
 
   // eventhandling for form submit
   const addName = event => {
     event.preventDefault();
-    console.log("nappia painettu", event.target);
+    if (newName === '') return;
+    console.log('nappia painettu', event.target);
     for (let person of persons) {
       if (newName === person.name) {
         alert(`${newName} on jo luettelossa!`);
@@ -39,47 +69,42 @@ const App = () => {
       }
     }
     setPersons(persons.concat({ name: newName, number: newNumber }));
+    setShow(show.concat({ name: newName, number: newNumber }));
   };
 
-  // person component
-  const Person = ({ person }) => (
-    <p>
-      {person.name} {person.number}
-    </p>
-  );
-
-  // component for persons
-  const Persons = ({ persons }) => {
-    const allPersons = persons.map(person => (
-      <Person key={person.name} person={person} />
-    ));
-    return allPersons;
-  };
   return (
     <div>
       <h2>Puhelinluettelo</h2>
-      <div>
-        rajaa näytettäviä: <input onChange={handleFilter} />
-      </div>
-      <h3>Lisää uusi</h3>
-      <form onSubmit={addName}>
-        <fieldset>
-          <div>
-            nimi: <input onChange={handleNameChange} />
-          </div>
-          <div>
-            numero: <input onChange={handleNumberChange} />
-          </div>
-          <div>
-            <button type='submit'>lisää</button>
-          </div>
-          <div />
-        </fieldset>
-      </form>
+      <Filter handleFilter={handleFilter} />
+
+      <h2>Lisää uusi</h2>
+      <AddPerson
+        addName={addName}
+        handleNumberChange={handleNumberChange}
+        handleNameChange={handleNameChange}
+      />
+
       <h2>Numerot</h2>
-      <Persons persons={persons} />
+      <Persons persons={show} />
     </div>
   );
 };
+
+const AddPerson = ({ addName, handleNameChange, handleNumberChange }) => (
+  <form onSubmit={addName}>
+    <fieldset>
+      <div>
+        nimi: <input onChange={handleNameChange} />
+      </div>
+      <div>
+        numero: <input onChange={handleNumberChange} />
+      </div>
+      <div>
+        <button type='submit'>lisää</button>
+      </div>
+      <div />
+    </fieldset>
+  </form>
+);
 
 export default App;
