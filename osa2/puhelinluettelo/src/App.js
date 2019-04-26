@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 // filtering component
 const Filter = props => {
@@ -26,15 +27,18 @@ const Persons = ({ persons }) => {
 
 // main component
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456' },
-    { name: 'Martti Tienari', number: '040-123456' },
-    { name: 'Arto Järvinen', number: '040-123456' },
-    { name: 'Lea Kutvonen', number: '040-123456' }
-  ]);
+  const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [show, setShow] = useState(persons);
+
+  // gets data from server
+  useEffect(() => {
+    axios.get('http://localhost:3001/persons').then(response => {
+      setPersons(response.data);
+      setShow(response.data);
+    });
+  }, []);
 
   // Compares imput of filter and filters matches to show
   const handleFilter = e => {
