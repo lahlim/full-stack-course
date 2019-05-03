@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
+// weather component
 const Weather = props => {
   const [weather, setWeather] = useState();
   useEffect(() => {
@@ -14,8 +15,8 @@ const Weather = props => {
         console.log(response.data);
 
         setWeather(response.data);
-        weatherNow();
-      });
+      })
+      .then(weatherNow());
   }, []);
 
   const weatherNow = () => {
@@ -27,7 +28,7 @@ const Weather = props => {
           <b>Temperature: </b>
           {weather.current.temp_c} celcius
         </p>
-        <img src={weather.current.condition.icon} alt='weather image' />
+        <img src={weather.current.condition.icon} alt='weather' />
         <p>
           <b>Wind: </b>
           {weather.current.wind_kph} kph direction {weather.current.wind_dir}

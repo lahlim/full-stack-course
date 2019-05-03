@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import personsService from './services/persons';
 
 // filtering component
 const Filter = props => {
@@ -8,21 +8,6 @@ const Filter = props => {
       rajaa näytettäviä: <input onChange={props.handleFilter} />
     </div>
   );
-};
-
-// person component
-const Person = ({ person }) => (
-  <p>
-    {person.name} {person.number}
-  </p>
-);
-
-// component for persons
-const Persons = ({ persons }) => {
-  const allPersons = persons.map(person => (
-    <Person key={person.name} person={person} />
-  ));
-  return allPersons;
 };
 
 // main component
@@ -34,9 +19,9 @@ const App = () => {
 
   // gets data from server
   useEffect(() => {
-    axios.get('http://localhost:3001/persons').then(response => {
-      setPersons(response.data);
-      setShow(response.data);
+    personsService.getAll().then(initialPersons => {
+      setPersons(initialPersons);
+      setShow(initialPersons);
     });
   }, []);
 
@@ -66,14 +51,41 @@ const App = () => {
     event.preventDefault();
     if (newName === '') return;
     console.log('nappia painettu', event.target);
-    for (let person of persons) {
-      if (newName === person.name) {
-        alert(`${newName} on jo luettelossa!`);
-        return;
-      }
+
+    const person = persons.find(p => p.name === newName);
+    if (person !== undefined && newName === person.name) {
+      window.confirm(
+        `${newName} on jo luettelossa, korvataanko vanha numero uudella?`
+      );
+      const changed = { ...person, number: newNumber };
+      personsService.update(person.id, changed).then(returned => {
+        setPersons(persons.map(p => (person.name !== p.name ? p : returned)));
+        setShow(persons.map(p => (person.name !== p.name ? p : returned)));
+      });
+      return;
     }
-    setPersons(persons.concat({ name: newName, number: newNumber }));
-    setShow(show.concat({ name: newName, number: newNumber }));
+
+    const newPerson = {
+      name: newName,
+      number: newNumber
+    };
+
+    personsService.create(newPerson).then(returnedPerson => {
+      setPersons(persons.concat(returnedPerson));
+      setShow(persons.concat(returnedPerson));
+    });
+    setNewName('');
+    setNewNumber('');
+  };
+
+  // handles remove with id
+  const handleRemove = e => {
+    window.confirm('Haluatko varmasti poistaa?');
+    const id = e.target.value;
+    personsService.remove(id);
+
+    setPersons(persons.filter(p => p.id.toString() !== id.toString()));
+    setShow(persons.filter(p => p.id.toString() !== id.toString()));
   };
 
   return (
@@ -83,25 +95,51 @@ const App = () => {
 
       <h2>Lisää uusi</h2>
       <AddPerson
+        newName={newName}
+        newNumber={newNumber}
         addName={addName}
         handleNumberChange={handleNumberChange}
         handleNameChange={handleNameChange}
       />
 
       <h2>Numerot</h2>
-      <Persons persons={show} />
+      <Persons persons={show} handleRemove={handleRemove} />
     </div>
   );
 };
 
-const AddPerson = ({ addName, handleNameChange, handleNumberChange }) => (
+// person component
+const Person = ({ person, handleRemove }) => (
+  <p>
+    {person.name} {person.number}
+    <button value={person.id} onClick={handleRemove}>
+      Poista
+    </button>
+  </p>
+);
+
+// component for persons
+const Persons = ({ persons, handleRemove }) => {
+  const allPersons = persons.map(person => (
+    <Person key={person.name} person={person} handleRemove={handleRemove} />
+  ));
+  return allPersons;
+};
+
+const AddPerson = ({
+  newName,
+  newNumber,
+  addName,
+  handleNameChange,
+  handleNumberChange
+}) => (
   <form onSubmit={addName}>
     <fieldset>
       <div>
-        nimi: <input onChange={handleNameChange} />
+        nimi: <input value={newName} onChange={handleNameChange} />
       </div>
       <div>
-        numero: <input onChange={handleNumberChange} />
+        numero: <input value={newNumber} onChange={handleNumberChange} />
       </div>
       <div>
         <button type='submit'>lisää</button>
