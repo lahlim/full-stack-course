@@ -4,9 +4,10 @@
   "description": "blogilista full-stack kurssi osa 4",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
-    "watch": "nodemon index.js"
+    "watch": "nodemon index.js",
+    "test": "jest --verbose",
+    "lint": "eslint ."
   },
   "author": "Lassi Mustonen",
   "license": "ISC",
@@ -14,9 +15,15 @@
     "cors": "^2.8.5",
     "dotenv": "^8.0.0",
     "express": "^4.17.0",
+    "lodash": "^4.17.11",
     "mongoose": "^5.5.11"
   },
   "devDependencies": {
+    "eslint": "^5.16.0",
+    "jest": "^24.8.0",
     "nodemon": "^1.19.0"
+  },
+  "jest": {
+    "testEnvironment": "node"
   }
 }
