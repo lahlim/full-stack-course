@@ -27,7 +27,6 @@ const mostBlogs = blogs => {
   counts = _.toPairs(counts).sort((a, b) => {
     return b[1] - a[1];
   });
-  console.log(counts[0]);
   return counts[0];
 };
 
@@ -39,7 +38,6 @@ const mostLikes = blogs => {
   counts = _.toPairs(counts).sort((a, b) => {
     return b[1] - a[1];
   });
-  console.log('Likes: ', counts);
   return counts[0];
 };
 
@@ -96,9 +94,6 @@ const blogs = [
     __v: 0
   }
 ];
-mostBlogs(blogs);
-mostLikes(blogs);
-favoriteBlog(blogs);
 module.exports = {
   dummy,
   totalLikes,
