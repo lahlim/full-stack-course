@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const BlogForm = () => {
+const BlogForm = props => {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [url, setUrl] = useState('');
@@ -9,6 +9,13 @@ const BlogForm = () => {
   const handleUrlChange = e => setUrl(e.target.value);
   const handleSubmit = e => {
     e.preventDefault();
+    const blogObject = {
+      title: title,
+      author: author,
+      url: url
+    };
+    props.addBlog(blogObject);
+
     console.log(title, '  ', author, '  ', url);
   };
 

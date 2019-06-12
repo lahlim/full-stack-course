@@ -8,6 +8,11 @@ blogsRouter.get('/', async (request, response) => {
   response.json(blogs.map(u => u.toJSON()));
 });
 
+blogsRouter.get('/:id', async (request, response) => {
+  const blog = await Blog.findById(request.params.id);
+  response.json(blog);
+});
+
 blogsRouter.post('/', async (request, response) => {
   const body = request.body;
 
@@ -19,7 +24,7 @@ blogsRouter.post('/', async (request, response) => {
         .json({ error: 'token is missing or it is invalid' });
     }
 
-    const user = await User.findById(body.userId);
+    const user = await User.findById(decodedToken.id);
 
     const blog = new Blog({
       author: body.author,
@@ -51,22 +56,22 @@ blogsRouter.delete('/:id', async (request, response) => {
 
   try {
     const deletedBlog = await Blog.findById(request.params.id);
-    if (deletedBlog.userId.toString() === decodedTonen.id.toString()) {
+    console.log(deletedBlog);
+    if (deletedBlog.user.toString() === decodedTonen.id.toString()) {
       await Blog.deleteOne(deletedBlog);
       response.status(204).end();
     } else {
       response.status(401).json({ error: 'token is invalid or it is missing' });
     }
   } catch (error) {
-    console.log(error);
     response.status(404).end();
   }
 });
 
 blogsRouter.put('/:id', async (request, response) => {
   try {
-    await Blog.findByIdAndUpdate(request.params.id);
-    response.status(200).end();
+    const blog = await Blog.findOne(request.params.id, request.body);
+    response.status(200).send(blog);
   } catch (e) {
     response.status(404).end();
   }
