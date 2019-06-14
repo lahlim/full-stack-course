@@ -70,9 +70,10 @@ blogsRouter.delete('/:id', async (request, response) => {
 
 blogsRouter.put('/:id', async (request, response) => {
   try {
-    const blog = await Blog.findOne(request.params.id, request.body);
+    const blog = await Blog.findByIdAndUpdate(request.params.id, request.body);
     response.status(200).send(blog);
   } catch (e) {
+    console.log('ERRORI TULI PUTISTA:\n ', e);
     response.status(404).end();
   }
 });

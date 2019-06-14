@@ -7,7 +7,11 @@ const Blog = ({ blog, addLike, removeBlog, user }) => {
     display: 'none'
   };
 
-  if (blog.user.username === user.username) buttonStyle.display = 'show';
+  try {
+    if (blog.user.username === user.username) buttonStyle.display = 'show';
+  } catch (e) {
+    console.log(e);
+  }
 
   const handleLike = e => {
     addLike(blog);
@@ -38,7 +42,7 @@ const Blog = ({ blog, addLike, removeBlog, user }) => {
 
   return (
     <div style={blogStyle} onClick={handleShowAll}>
-      {blog.title}
+      <div>{blog.title}</div>
       <br />
       {blog.author}
       <br /> {blog.url}

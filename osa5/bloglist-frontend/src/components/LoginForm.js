@@ -1,23 +1,23 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useField } from '../hooks';
 
 const LoginForm = ({ logIn }) => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const handleUserChange = e => setUsername(e.target.value);
-  const handlePWChange = e => setPassword(e.target.value);
-  const handleLogin = e => logIn(e, username, password);
+  const handleLogin = e => logIn(e, username.value, password.value);
+
+  const [username] = useField('text');
+  const [password] = useField('password');
 
   return (
     <>
       <h2>Log in please</h2>
       <form onSubmit={handleLogin}>
         <label>
-          Tekstiä
-          <input onChange={handleUserChange} type='text' />
+          Username
+          <input {...username} />
         </label>
         <label>
-          Tekstiä2
-          <input onChange={handlePWChange} type='password' />
+          Password
+          <input {...password} />
         </label>
         <button>LogIn</button>
       </form>

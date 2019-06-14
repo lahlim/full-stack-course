@@ -1,22 +1,22 @@
 import React, { useState } from 'react';
 
 const BlogForm = props => {
-  const [title, setTitle] = useState('');
-  const [author, setAuthor] = useState('');
-  const [url, setUrl] = useState('');
-  const handleTitleChange = e => setTitle(e.target.value);
-  const handleAuthorChange = e => setAuthor(e.target.value);
-  const handleUrlChange = e => setUrl(e.target.value);
+  // deconstruct table index 0 and 1 from index.js hooks/return
+  const [title, titleReset] = useState('');
+  const [author, authorReset] = useState('');
+  const [url, urlReset] = useState('');
+
   const handleSubmit = e => {
     e.preventDefault();
     const blogObject = {
-      title: title,
-      author: author,
-      url: url
+      title: title.value,
+      author: author.value,
+      url: url.value
     };
     props.addBlog(blogObject);
-
-    console.log(title, '  ', author, '  ', url);
+    titleReset();
+    authorReset();
+    urlReset();
   };
 
   return (
@@ -28,15 +28,15 @@ const BlogForm = props => {
       >
         <label>
           Title
-          <input onChange={handleTitleChange} type='text' />
+          <input {...title} />
         </label>
         <label>
           Author
-          <input onChange={handleAuthorChange} type='text' />
+          <input {...author} />
         </label>
         <label>
           url
-          <input onChange={handleUrlChange} type='text' />
+          <input {...url} />
         </label>
         <button type='submit'>AddBlog</button>
       </form>
