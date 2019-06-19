@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { createNew } from '../reducers/anecdoteReducer';
+import { notify, hide } from '../reducers/notificationReducer';
 
 const AnecdoteForm = ({ store }) => {
   const [newAnecdote, setNewAnecdote] = useState('');
@@ -8,6 +9,10 @@ const AnecdoteForm = ({ store }) => {
   const createAnecdote = e => {
     e.preventDefault();
     store.dispatch(createNew(newAnecdote));
+    store.dispatch(notify(`Added: ${newAnecdote}`));
+    setTimeout(() => {
+      store.dispatch(hide());
+    }, 5000);
   };
 
   return (
