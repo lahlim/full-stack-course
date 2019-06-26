@@ -1,17 +1,20 @@
 import React, { useState } from 'react';
+import { connect } from 'react-redux';
 import { createNew } from '../reducers/anecdoteReducer';
 import { notify, hide } from '../reducers/notificationReducer';
 
-const AnecdoteForm = ({ store }) => {
+const AnecdoteForm = props => {
   const [newAnecdote, setNewAnecdote] = useState('');
   const handleNewChange = e => setNewAnecdote(e.target.value);
 
   const createAnecdote = e => {
+    console.log(createNew);
+
     e.preventDefault();
-    store.dispatch(createNew(newAnecdote));
-    store.dispatch(notify(`Added: ${newAnecdote}`));
+    props.createNew(newAnecdote);
+    props.notify(`Added: ${newAnecdote}`);
     setTimeout(() => {
-      store.dispatch(hide());
+      props.hide();
     }, 5000);
   };
 
@@ -28,4 +31,13 @@ const AnecdoteForm = ({ store }) => {
   );
 };
 
-export default AnecdoteForm;
+const mapDispatchToProps = {
+  createNew,
+  notify,
+  hide
+};
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(AnecdoteForm);
