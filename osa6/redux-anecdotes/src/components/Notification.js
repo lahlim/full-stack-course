@@ -8,6 +8,7 @@ const Notification = props => {
     borderWidth: 1
   };
   const notificationMsg = props.notification;
+  console.log('NOTIFICATION MSG IN COMPONENT: ', notificationMsg);
 
   if (!notificationMsg) style = { display: 'none' };
 
@@ -20,9 +21,9 @@ const Notification = props => {
 };
 
 const mapStateToProps = state => {
-  console.log('THIS IS STATE', state);
+  console.log(state);
   return {
-    notification: state.notificationMsg
+    notification: state.notification
   };
 };
 

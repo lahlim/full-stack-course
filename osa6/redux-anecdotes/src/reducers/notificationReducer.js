@@ -1,8 +1,6 @@
 const initialState = '';
 
 const reducer = (state = initialState, action) => {
-  console.log('state now: ', state);
-  console.log('action', action);
   switch (action.type) {
     case 'SHOW':
       return action.message;
@@ -14,16 +12,12 @@ const reducer = (state = initialState, action) => {
   }
 };
 
-export const notify = message => {
-  return {
-    type: 'SHOW',
-    message
-  };
-};
-
-export const hide = () => {
-  return {
-    type: 'HIDE'
+export const notifyUser = (message, seconds) => {
+  return async dispatch => {
+    await dispatch({ type: 'SHOW', message });
+    setTimeout(() => {
+      dispatch({ type: 'HIDE' });
+    }, seconds * 1000);
   };
 };
 
