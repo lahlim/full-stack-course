@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import personsService from './services/persons';
-import './index.css';
+import React, { useState, useEffect } from "react";
+import personsService from "./services/persons";
+import "./index.css";
 
 // filtering component
 const Filter = props => {
@@ -14,10 +14,10 @@ const Filter = props => {
 // main component
 const App = () => {
   const [persons, setPersons] = useState([]);
-  const [newName, setNewName] = useState('');
-  const [newNumber, setNewNumber] = useState('');
+  const [newName, setNewName] = useState("");
+  const [newNumber, setNewNumber] = useState("");
   const [show, setShow] = useState(persons);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
   const [success, setSuccess] = useState(true);
 
   // gets data from server
@@ -61,7 +61,7 @@ const App = () => {
   // eventhandling for form submit
   const addName = event => {
     event.preventDefault();
-    if (newName === '') return;
+    if (newName === "") return;
 
     const person = persons.find(p => p.name === newName);
     if (person !== undefined && newName === person.name) {
@@ -74,7 +74,7 @@ const App = () => {
           setShow(persons.map(p => (person.name !== p.name ? p : returned)));
         })
         .catch(e => {
-          console.log('Virhe poistossa:', e);
+          console.log("Virhe poistossa:", e);
           changeError(`Henkilö on poistettu`, false);
         });
       return;
@@ -85,13 +85,20 @@ const App = () => {
       number: newNumber
     };
 
-    personsService.create(newPerson).then(returnedPerson => {
-      setPersons(persons.concat(returnedPerson));
-      setShow(persons.concat(returnedPerson));
-      changeError(`Lisättiin ${newName}.`, true);
-    });
-    setNewName('');
-    setNewNumber('');
+    personsService
+      .create(newPerson)
+      .then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson));
+        setShow(persons.concat(returnedPerson));
+        changeError(`Lisättiin ${newName}.`, true);
+      })
+      .catch(error => {
+        // pääset käsiksi palvelimen palauttamaan virheilmoitusolioon näin
+        changeError(`Virhe: ${error.response.data}`, false);
+        console.log(error.response.data);
+      });
+    setNewName("");
+    setNewNumber("");
   };
 
   // handles remove with id
@@ -106,7 +113,7 @@ const App = () => {
         changeError(`Poistettiin henkilö onnistuneesti.`, true);
       })
       .catch(e => {
-        console.log('Virhe poistossa:', e);
+        console.log("Virhe poistossa:", e);
         changeError(`Henkilö on jo poistettu`, false);
       });
   };
@@ -134,7 +141,7 @@ const App = () => {
 
 // Notification component
 const Notification = ({ message, success }) => {
-  if (message === null || message === '') {
+  if (message === null || message === "") {
     return null;
   }
   if (success === true) return <p className='success'>{message}</p>;
@@ -155,7 +162,7 @@ const Person = ({ person, handleRemove }) => (
 // component for persons
 const Persons = ({ persons, handleRemove }) => {
   const allPersons = persons.map(person => (
-    <Person key={person.name} person={person} handleRemove={handleRemove} />
+    <Person key={person.id} person={person} handleRemove={handleRemove} />
   ));
   return allPersons;
 };
