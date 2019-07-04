@@ -1,19 +1,16 @@
 import React, { useEffect } from 'react';
-import Blog from './components/Blog';
+import BlogList from './components/BlogList';
 import blogService from './services/blogs';
 import LoginForm from './components/LoginForm';
 import BlogForm from './components/AddBlogform';
 import loginService from './services/Login';
 import Togglable from './components/Togglable';
+import Users from './components/Users';
 import { notifyUser } from './reducers/notificationReducer';
 import { login, logout } from './reducers/loginReducer';
-import {
-  initializeBlogs,
-  addLike,
-  removeBlog,
-  addBlog
-} from './reducers/blogsReducer';
+import { initializeBlogs, addBlog } from './reducers/blogsReducer';
 import { connect } from 'react-redux';
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 
 const App = props => {
   console.log(props);
@@ -38,19 +35,7 @@ const App = props => {
   const logOut = () => {
     props.logout();
     window.localStorage.clear();
-    console.log('User logged out');
   };
-
-  const removeBlog = blog => {
-    console.log('poisto');
-    props.removeBlog(blog.id);
-  };
-
-  const addLike = blog => props.addLike(blog);
-
-  useEffect(() => {
-    props.initializeBlogs();
-  }, []);
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedUser');
@@ -79,23 +64,23 @@ const App = props => {
   return (
     <div>
       {props.user !== null && <LoggedInfo user={props.user} logOut={logOut} />}
-      <h2 style={{ color: 'green' }}>{props.notification}</h2>
-      {props.user !== null && (
-        <Togglable buttonLabel='Add Blog'>
-          <BlogForm addBlog={addBlog} />
-        </Togglable>
-      )}
-
-      <h2>blogs</h2>
-      {props.blogs.map(blog => (
-        <Blog
-          removeBlog={removeBlog}
-          addLike={addLike}
-          key={blog.id}
-          blog={blog}
-          user={props.user}
-        />
-      ))}
+      <br />
+      <Router>
+        <Link style={{ padding: 5 }} to='/'>
+          Blogs
+        </Link>
+        <Link style={{ padding: 5 }} to='/users'>
+          Users
+        </Link>
+        {props.user !== null && (
+          <Togglable buttonLabel='Add Blog'>
+            <BlogForm addBlog={addBlog} />
+          </Togglable>
+        )}
+        <Route exact path='/users' render={() => <Users />} />
+        <Route exact path='/' render={() => <BlogList props={props} />} />
+        <h2 style={{ color: 'green' }}>{props.notification}</h2>
+      </Router>
     </div>
   );
 };
@@ -113,10 +98,8 @@ const LoggedInfo = ({ user, logOut }) => {
 const mapDispatchToProps = {
   notifyUser,
   initializeBlogs,
-  addLike,
-  removeBlog,
-  addBlog,
 
+  addBlog,
   login,
   logout
 };

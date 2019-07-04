@@ -70,24 +70,6 @@ blogsRouter.delete('/:id', async (request, response) => {
   }
 });
 
-/*blogsRouter.put('/:id', async (request, response) => {
-  const body = request.body;
-  console.log('\n\nBODY: ', body);
-
-  body.userId = body.user.id;
-  try {
-    const blog = await Blog.findByIdAndUpdate(request.params.id, body, {
-      new: true
-    });
-    console.log('\n\nBLOGI: ', blog);
-
-    response.status(200).send(blog);
-  } catch (e) {
-    console.log('ERRORI TULI PUTISTA:\n ', e);
-    response.status(404).end();
-  }
-});*/
-
 blogsRouter.put('/:id', async (request, response) => {
   const body = request.body;
   try {
