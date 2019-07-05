@@ -1,12 +1,10 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import Blog from './Blog';
 import { connect } from 'react-redux';
-import { addLike, removeBlog } from '../reducers/blogsReducer';
+import { addLike, removeBlog, initializeBlogs } from '../reducers/blogsReducer';
 
-const BlogList = ({ props }) => {
-  useEffect(() => {
-    props.initializeBlogs();
-  }, []);
+const BlogList = props => {
+  console.log('STATE IN BLOGLIST: ', props);
   const removeBlog = blog => props.removeBlog(blog.id);
   const addLike = blog => props.addLike(blog);
   return (
@@ -27,12 +25,16 @@ const BlogList = ({ props }) => {
 
 const mapDispatchToProps = {
   addLike,
-  removeBlog
+  removeBlog,
+  initializeBlogs
 };
 
 const mapStateToProps = state => {
+  console.log('STATE: ', state);
+
   return {
-    blogs: state.blogs
+    blogs: state.blogs,
+    user: state.user
   };
 };
 

@@ -5,6 +5,8 @@ const initialState = [];
 export const initializeUsers = () => {
   return async dispatch => {
     const users = await usersService.getAll();
+    console.log('PALAUTETUT KÄYTTÄJÄT: ', users);
+
     dispatch({
       type: 'INIT',
       data: users

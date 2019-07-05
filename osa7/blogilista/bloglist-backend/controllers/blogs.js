@@ -47,6 +47,28 @@ blogsRouter.post('/', async (request, response) => {
   }
 });
 
+blogsRouter.post('/:id/comments', async (request, response) => {
+  console.log('HALOOOO');
+
+  const body = request.body;
+  console.log('COMMENT: ', body.comment);
+  console.log(request.params.id);
+
+  try {
+    const blog = await Blog.findByIdAndUpdate(
+      request.params.id,
+      {
+        $push: { comments: body.comment }
+      },
+      { new: true }
+    );
+    response.status(201).json(blog);
+  } catch (err) {
+    console.log(err);
+    response.status(500).end();
+  }
+});
+
 blogsRouter.delete('/:id', async (request, response) => {
   const decodedTonen = jwt.verify(request.token, process.env.SECRET);
 

@@ -1,0 +1,6 @@
+POST http://localhost:3003/api/blogs/5d1c757d55435a07a05144a8/comments 
+Content-Type: application/json
+
+{
+    "comment": "MASSIIVISTA"
+}

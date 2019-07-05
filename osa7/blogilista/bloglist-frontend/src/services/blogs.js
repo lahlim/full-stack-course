@@ -21,10 +21,17 @@ const update = (id, newObject) => {
   return request.then(response => response.data);
 };
 
+const comment = (id, comment) => {
+  const com = { comment };
+  const request = axios.post(`${baseUrl}/${id}/comments`, com);
+  console.log(`${baseUrl}/${id}/comments`);
+  return request.then(response => response.data);
+};
+
 const remove = id => {
   const config = { headers: { Authorization: token } };
   const request = axios.delete(`${baseUrl}/${id}`, config);
   return request.then(response => response.data);
 };
 
-export default { getAll, create, update, setToken, remove };
+export default { getAll, create, update, setToken, remove, comment };

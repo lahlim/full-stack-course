@@ -6,7 +6,7 @@ export const initializeBlogs = () => {
   return async dispatch => {
     const blogs = await blogService.getAll();
     dispatch({
-      type: 'INIT',
+      type: 'INITBLOGS',
       data: blogs
     });
   };
@@ -52,7 +52,7 @@ export const addLike = blog => {
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
-    case 'INIT':
+    case 'INITBLOGS':
       return action.data;
     case 'ADD':
       return [...state, action.data];

@@ -6,14 +6,21 @@ import BlogForm from './components/AddBlogform';
 import loginService from './services/Login';
 import Togglable from './components/Togglable';
 import Users from './components/Users';
+import User from './components/User';
+import SingleBlog from './components/SingleBlog';
 import { notifyUser } from './reducers/notificationReducer';
 import { login, logout } from './reducers/loginReducer';
-import { initializeBlogs, addBlog } from './reducers/blogsReducer';
+import { addBlog, initializeBlogs } from './reducers/blogsReducer';
+import { initializeUsers } from './reducers/usersReducer';
 import { connect } from 'react-redux';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 
 const App = props => {
   console.log(props);
+  useEffect(() => {
+    props.initializeUsers();
+    props.initializeBlogs();
+  }, []);
 
   const logIn = async (e, usr, pw) => {
     e.preventDefault();
@@ -78,7 +85,17 @@ const App = props => {
           </Togglable>
         )}
         <Route exact path='/users' render={() => <Users />} />
-        <Route exact path='/' render={() => <BlogList props={props} />} />
+        <Route exact path='/' render={() => <BlogList />} />
+        <Route
+          exact
+          path='/users/:id'
+          render={({ match }) => <User id={match.params.id} />}
+        />
+        <Route
+          exact
+          path='/blogs/:id'
+          render={({ match }) => <SingleBlog id={match.params.id} />}
+        />
         <h2 style={{ color: 'green' }}>{props.notification}</h2>
       </Router>
     </div>
@@ -98,6 +115,7 @@ const LoggedInfo = ({ user, logOut }) => {
 const mapDispatchToProps = {
   notifyUser,
   initializeBlogs,
+  initializeUsers,
 
   addBlog,
   login,
@@ -105,7 +123,6 @@ const mapDispatchToProps = {
 };
 
 const mapStateToProps = state => {
-  console.log(state);
   return {
     blogs: state.blogs,
     notification: state.notification,

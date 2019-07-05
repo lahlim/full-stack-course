@@ -1,7 +1,6 @@
 const initialState = null;
 
 export const login = user => {
-  console.log('LOGIN REDUCER:', user);
   return {
     type: 'LOGIN',
     user
