@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import blogService from '../services/blogs';
 import { removeBlog, addLike } from '../reducers/blogsReducer';
+import ListGroup from 'react-bootstrap/ListGroup';
+import ListGroupItem from 'react-bootstrap/ListGroupItem';
+import Button from 'react-bootstrap/Button';
 
 const SingleBlog = props => {
   const [comment, setComment] = useState('');
@@ -29,26 +32,26 @@ const SingleBlog = props => {
   return (
     <div>
       <h2>{blog.title}</h2>
-      <ul>
-        <li>{blog.author}</li>
-        <li>
-          {blog.likes} likes <button onClick={handleLike}>Like</button>
-        </li>
-        <li>
+      <ListGroup>
+        <ListGroupItem>{blog.author}</ListGroupItem>
+        <ListGroupItem>
+          {blog.likes} likes <Button onClick={handleLike}>Like</Button>
+        </ListGroupItem>
+        <ListGroupItem>
           added by {blog.user.name}
-          <button style={buttonStyle} onClick={handleRemove}>
+          <Button style={buttonStyle} onClick={handleRemove}>
             Remove
-          </button>
-        </li>
-      </ul>
+          </Button>
+        </ListGroupItem>
+      </ListGroup>
       <h2>Comments</h2>
       <input type='text' onChange={handleText} placeholder='Add comment' />
-      <button onClick={handleAdd}>add comment</button>
-      <ul>
+      <Button onClick={handleAdd}>add comment</Button>
+      <ListGroup>
         {blog.comments.map(comment => (
-          <li key={genId()}>{comment}</li>
+          <ListGroupItem key={genId()}>{comment}</ListGroupItem>
         ))}
-      </ul>
+      </ListGroup>
     </div>
   );
 };
