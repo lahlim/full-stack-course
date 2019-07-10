@@ -2,15 +2,16 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { initializeUsers } from '../reducers/usersReducer';
 import { Link } from 'react-router-dom';
+import Table from 'react-bootstrap/Table';
 
 const Users = props => {
   return (
     <>
       <h1>Users</h1>
-      <table>
+      <Table striped bordered hover>
         <tbody>
           <tr>
-            <th />
+            <th>Name</th>
             <th>Blogs created</th>
           </tr>
           {props.blogUsers.map(user => (
@@ -23,7 +24,7 @@ const Users = props => {
             </tr>
           ))}
         </tbody>
-      </table>
+      </Table>
     </>
   );
 };
