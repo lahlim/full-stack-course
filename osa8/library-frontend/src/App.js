@@ -3,7 +3,7 @@ import Authors from './components/Authors';
 import Books from './components/Books';
 import NewBook from './components/NewBook';
 import { gql } from 'apollo-boost';
-import { useQuery, useApolloClient } from 'react-apollo-hooks';
+import { useQuery } from 'react-apollo-hooks';
 
 const ALL_AUTHORS = gql`
   {
@@ -15,14 +15,22 @@ const ALL_AUTHORS = gql`
   }
 `;
 
+const ALL_BOOKS = gql`
+  {
+    allBooks {
+      title
+      author
+      published
+    }
+  }
+`;
+
 const App = () => {
   const [page, setPage] = useState('authors');
 
-  const client = useApolloClient();
   // QUERYS:
   const authorsq = useQuery(ALL_AUTHORS);
-
-  console.log(authorsq);
+  const booksq = useQuery(ALL_BOOKS);
 
   return (
     <div>
@@ -34,7 +42,7 @@ const App = () => {
 
       <Authors show={page === 'authors'} data={authorsq} />
 
-      <Books show={page === 'books'} />
+      <Books show={page === 'books'} data={booksq} />
 
       <NewBook show={page === 'add'} />
     </div>

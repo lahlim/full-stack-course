@@ -9,7 +9,6 @@ const Authors = ({ show, data }) => {
   if (data.loading === true) return <p>Loading...</p>;
 
   authors = data.data.allAuthors;
-  console.log(data.data.allAuthors);
 
   return (
     <div>
