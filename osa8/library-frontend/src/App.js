@@ -19,7 +19,9 @@ const ALL_BOOKS = gql`
   {
     allBooks {
       title
-      author
+      author {
+        name
+      }
       published
     }
   }
@@ -39,7 +41,9 @@ const ADD_BOOK = gql`
       genres: $genres
     ) {
       title
-      author
+      author {
+        name
+      }
       published
       genres
     }

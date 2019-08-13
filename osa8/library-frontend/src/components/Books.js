@@ -8,6 +8,9 @@ const Books = ({ show, data }) => {
   if (data.loading === true) return <p>Loading...</p>;
 
   const books = data.data.allBooks;
+  console.log(books);
+
+  if (!books) return <h2>NoBooks</h2>;
 
   return (
     <div>
@@ -23,7 +26,7 @@ const Books = ({ show, data }) => {
           {books.map(a => (
             <tr key={a.title}>
               <td>{a.title}</td>
-              <td>{a.author}</td>
+              <td>{a.author.name}</td>
               <td>{a.published}</td>
             </tr>
           ))}

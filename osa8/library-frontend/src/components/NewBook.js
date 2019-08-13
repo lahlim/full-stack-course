@@ -6,7 +6,6 @@ const NewBook = ({ show, addBook }) => {
   const [published, setPublished] = useState('');
   const [genre, setGenre] = useState('');
   const [genres, setGenres] = useState([]);
-  console.log(addBook);
 
   if (!show) {
     return null;
@@ -14,9 +13,10 @@ const NewBook = ({ show, addBook }) => {
 
   const submit = async e => {
     e.preventDefault();
-    await addBook[0]({
+    let asd = await addBook[0]({
       variables: { title, author, published: Number(published), genres }
     });
+    console.log(asd);
 
     console.log('add book...');
 

@@ -2,36 +2,32 @@ import React, { useState } from 'react';
 import Select from 'react-select';
 
 const Authors = ({ show, data, setBornTo }) => {
-  const [name, setName] = useState('');
   const [born, setBorn] = useState('');
   const [selectedOption, setSelectedOption] = useState(null);
   if (!show) {
     return null;
   }
-  let authors = [];
 
   if (data.loading === true) return <p>Loading...</p>;
 
-  authors = data.data.allAuthors;
+  let authors = data.data.allAuthors;
+  if (!authors) return <h2>No authors found</h2>;
 
   const submit = async e => {
     e.preventDefault();
-    console.log(selectedOption.value);
-    setName(selectedOption.value);
 
-    let updated = await setBornTo[0]({
-      variables: { name, born: parseInt(born) }
+    console.log('VALUE: ');
+
+    await setBornTo[0]({
+      variables: { name: selectedOption.value, born: parseInt(born) }
     });
-
-    authors.concat(updated);
   };
-  console.log(authors);
 
   const options = authors.map(author => ({
     value: author.name,
     label: author.name
   }));
-  console.log(options);
+  console.log('OPTIONS: ', options);
 
   const handleChange = e => {
     setSelectedOption(e);
