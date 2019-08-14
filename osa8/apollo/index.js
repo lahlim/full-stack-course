@@ -1,10 +1,11 @@
 require('dotenv').config();
 const { ApolloServer, gql } = require('apollo-server');
-const uuid = require('uuid/v1');
 const mongoose = require('mongoose');
 const Author = require('./models/Author');
+const User = require('./models/User');
 const Book = require('./models/Book');
-
+const jwt = require('jsonwebtoken');
+const JWT_SECRET = 'NEED_HERE_A_SECRET_KEYdasasddasasd';
 const MONGODB_URI = process.env.MONGODB_URI;
 
 mongoose
@@ -21,6 +22,16 @@ const typeDefs = gql`
     id: ID!
   }
 
+  type Token {
+    value: String!
+  }
+
+  type User {
+    username: String!
+    favoriteGenre: String!
+    id: ID!
+  }
+
   type Author {
     name: String!
     id: ID!
@@ -34,6 +45,7 @@ const typeDefs = gql`
     authorCount: Int
     allBooks(author: String, genre: String): [Book]
     allAuthors: [Author]
+    me: User
   }
 
   type Mutation {
@@ -45,6 +57,8 @@ const typeDefs = gql`
     ): Book
     editAuthor(name: String!, setBornTo: Int!): Author
     addAuthor(name: String!, born: Int): Author
+    createUser(username: String!, favoriteGenre: String!): User
+    login(username: String!, password: String!): Token
   }
 `;
 
@@ -58,8 +72,12 @@ const resolvers = {
     authorCount: () => Author.collection.countDocuments(),
     allBooks: () => Book.find().populate('author')
   },
+
   Mutation: {
     addBook: async (root, args) => {
+      if (!context.currentUser) {
+        throw new UserInputError('You need to be loggen in to change data');
+      }
       const oldAuthor = await Author.findOne({ name: args.author });
       if (oldAuthor) {
         const book = new Book({ ...args, author: oldAuthor });
@@ -83,6 +101,9 @@ const resolvers = {
       Author.insertMany([{ name: args.name, born: args.born }]);
     },
     editAuthor: async (root, args) => {
+      if (!context.currentUser) {
+        throw new UserInputError('You need to be loggen in to change data');
+      }
       let author = null;
       try {
         author = await Author.findOneAndUpdate(
@@ -93,15 +114,50 @@ const resolvers = {
       } catch (error) {
         throw new UserInputError('Syötä ikä muutos numeroina');
       }
-
       return author;
+    },
+    createUser: (root, args) => {
+      const user = new User({ ...args, password: 'password' });
+      return user.save().catch(error => {
+        throw new UserInputError(error.message, {
+          invalidArgs: args
+        });
+      });
+    },
+    login: async (root, args) => {
+      const foundUser = await User.findOne({ username: args.username });
+      console.log(foundUser);
+
+      if (!foundUser || args.password != 'password') {
+        throw new UserInputError('Username or pasword is not correct.');
+      }
+      const token = {
+        favoriteGenre: args.favoriteGenre,
+        username: foundUser.username,
+        id: foundUser.id
+      };
+      console.log(token);
+
+      console.log({ value: jwt.sign(token, JWT_SECRET) });
+
+      return { value: jwt.sign(token, JWT_SECRET) };
     }
   }
 };
 
 const server = new ApolloServer({
   typeDefs,
-  resolvers
+  resolvers,
+  context: async ({ req }) => {
+    const authorization = req ? req.headers.authorization : null;
+
+    if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
+      const decodedToken = jwt.verify(authorization.substring(7), JWT_SECRET);
+      const currentUser = await User.findById(decodedToken.id);
+
+      return { currentUser };
+    }
+  }
 });
 
 server.listen().then(({ url }) => {
