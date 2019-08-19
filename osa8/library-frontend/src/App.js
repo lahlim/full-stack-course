@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import Authors from './components/Authors';
 import Books from './components/Books';
+import Recommendations from './components/Recommendations';
 import NewBook from './components/NewBook';
 import LoginForm from './components/LoginForm';
 import { gql } from 'apollo-boost';
 import { useQuery, useMutation } from 'react-apollo-hooks';
+import Container from 'react-bootstrap/Container';
 
-const GET_ME = gql`
+const GET_USER = gql`
   query me {
     me {
       username
+      favoriteGenre
     }
   }
 `;
@@ -39,6 +42,7 @@ const ALL_BOOKS = gql`
       author {
         name
       }
+      genres
       published
     }
   }
@@ -57,6 +61,27 @@ const ADD_BOOK = gql`
       published: $published
       genres: $genres
     ) {
+      title
+      author {
+        name
+      }
+      published
+      genres
+    }
+  }
+`;
+
+const ALL_GENRES = gql`
+  {
+    allBooks {
+      genres
+    }
+  }
+`;
+
+const BOOKS_IN_GENRE = gql`
+  query allBooks($genre: String! = "") {
+    allBooks(genre: $genre) {
       title
       author {
         name
@@ -92,10 +117,13 @@ const App = () => {
 
   // QUERYS:
   const authorsq = useQuery(ALL_AUTHORS);
-  const booksq = useQuery(ALL_BOOKS);
+
   const addBook = useMutation(ADD_BOOK);
   const setBornTo = useMutation(SET_BORN_TO);
   const login = useMutation(LOGIN);
+  const allGenresQ = useQuery(ALL_GENRES);
+  const userInfo = useQuery(GET_USER);
+  console.log(userInfo);
 
   if (!localStorage.getItem('token'))
     return (
@@ -108,22 +136,39 @@ const App = () => {
 
   return (
     <>
-      <div>
-        <button onClick={() => setPage('authors')}>authors</button>
-        <button onClick={() => setPage('books')}>books</button>
-        <button onClick={() => setPage('add')}>add book</button>
-        <button onClick={() => logOut()}>LogOut</button>
-      </div>
+      <Container>
+        <div>
+          <button onClick={() => setPage('authors')}>authors</button>
+          <button onClick={() => setPage('books')}>books</button>
+          <button onClick={() => setPage('add')}>add book</button>
+          <button onClick={() => setPage('recommendations')}>
+            Recommendation
+          </button>
+          <button onClick={() => logOut()}>LogOut</button>
+        </div>
 
-      <Authors
-        show={page === 'authors'}
-        data={authorsq}
-        setBornTo={setBornTo}
-      />
+        <Authors
+          show={page === 'authors'}
+          data={authorsq}
+          setBornTo={setBornTo}
+        />
 
-      <Books show={page === 'books'} data={booksq} />
+        <Books
+          show={page === 'books'}
+          booksQ={ALL_BOOKS}
+          allGenresData={allGenresQ}
+          allGenres={ALL_GENRES}
+        />
 
-      <NewBook show={page === 'add'} addBook={addBook} />
+        <Recommendations
+          show={page === 'recommendations'}
+          booksQ={ALL_BOOKS}
+          allGenresData={allGenresQ}
+          allGenres={ALL_GENRES}
+        />
+
+        <NewBook show={page === 'add'} addBook={addBook} />
+      </Container>
     </>
   );
 };

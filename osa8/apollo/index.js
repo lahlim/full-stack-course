@@ -70,7 +70,8 @@ const resolvers = {
     allAuthors: () => Author.find(),
     bookCount: () => Book.collection.countDocuments(),
     authorCount: () => Author.collection.countDocuments(),
-    allBooks: () => Book.find().populate('author')
+    allBooks: () => Book.find().populate('author'),
+    me: (root, args, context) => context.currentUser
   },
 
   Mutation: {
@@ -154,7 +155,7 @@ const server = new ApolloServer({
     if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
       const decodedToken = jwt.verify(authorization.substring(7), JWT_SECRET);
       const currentUser = await User.findById(decodedToken.id);
-
+      console.log('AUTH: ===========, ', authorization);
       return { currentUser };
     }
   }

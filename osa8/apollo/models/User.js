@@ -11,7 +11,8 @@ const schema = new mongoose.Schema({
     required: true
   },
   favoriteGenre: {
-    type: String
+    type: String,
+    required: true
   }
 });
 

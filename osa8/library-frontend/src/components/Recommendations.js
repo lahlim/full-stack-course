@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useApolloClient } from 'react-apollo-hooks';
 
-const Books = ({ show, booksQ, allGenresData }) => {
+const Recommendations = ({ show, booksQ, allGenresData }) => {
   const [books, setBooks] = useState([]);
   const [bookstoShow, setBookstoShow] = useState([]);
   const client = useApolloClient();
@@ -31,23 +31,9 @@ const Books = ({ show, booksQ, allGenresData }) => {
   if (!books) return <h2>NoBooks</h2>;
   if (!allGenresData) return <h2>NoGenres</h2>;
 
-  let genres = new Set(
-    allGenresData.data.allBooks.reduce(
-      (prev, cur) => prev.concat(cur.genres),
-      []
-    )
-  );
-  genres = [...genres];
-  const allBooks = () => {
-    setBookstoShow(books);
-  };
-
-  console.log('ASDDSA', genres);
-  console.log('BOOKS,', books);
-
   return (
     <div>
-      <h2>books</h2>
+      <h2>Recommended</h2>
 
       <table>
         <tbody>
@@ -66,16 +52,8 @@ const Books = ({ show, booksQ, allGenresData }) => {
           ))}
         </tbody>
       </table>
-      {genres.map(genre => (
-        <button key={genre} value={genre} onClick={filterByGenre}>
-          {genre}
-        </button>
-      ))}
-      <button key={'all'} value={''} onClick={allBooks}>
-        allGenres
-      </button>
     </div>
   );
 };
 
-export default Books;
+export default Recommendations;
