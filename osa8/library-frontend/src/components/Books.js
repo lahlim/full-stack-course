@@ -20,8 +20,6 @@ const Books = ({ show, booksQ, allGenresData }) => {
   }, [booksQ, client]);
 
   const filterByGenre = e => {
-    console.log(e.target.value);
-
     setBookstoShow(books.filter(book => book.genres[0] === e.target.value));
   };
 
@@ -41,9 +39,6 @@ const Books = ({ show, booksQ, allGenresData }) => {
   const allBooks = () => {
     setBookstoShow(books);
   };
-
-  console.log('ASDDSA', genres);
-  console.log('BOOKS,', books);
 
   return (
     <div>

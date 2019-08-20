@@ -1,11 +1,12 @@
 require('dotenv').config();
-const { ApolloServer, gql } = require('apollo-server');
+const { ApolloServer, gql, UserInputError } = require('apollo-server');
 const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
 const Author = require('./models/Author');
 const User = require('./models/User');
 const Book = require('./models/Book');
-const jwt = require('jsonwebtoken');
-const JWT_SECRET = 'NEED_HERE_A_SECRET_KEYdasasddasasd';
+
+const JWT_SECRET = 'NEED_HERE_A_SECRET_KEY';
 const MONGODB_URI = process.env.MONGODB_URI;
 
 mongoose
@@ -75,7 +76,7 @@ const resolvers = {
   },
 
   Mutation: {
-    addBook: async (root, args) => {
+    addBook: async (root, args, context) => {
       if (!context.currentUser) {
         throw new UserInputError('You need to be loggen in to change data');
       }
@@ -98,10 +99,10 @@ const resolvers = {
         }
       }
     },
-    addAuthor: (root, args) => {
+    addAuthor: (root, args, context) => {
       Author.insertMany([{ name: args.name, born: args.born }]);
     },
-    editAuthor: async (root, args) => {
+    editAuthor: async (root, args, context) => {
       if (!context.currentUser) {
         throw new UserInputError('You need to be loggen in to change data');
       }
@@ -127,7 +128,6 @@ const resolvers = {
     },
     login: async (root, args) => {
       const foundUser = await User.findOne({ username: args.username });
-      console.log(foundUser);
 
       if (!foundUser || args.password != 'password') {
         throw new UserInputError('Username or pasword is not correct.');
@@ -137,9 +137,6 @@ const resolvers = {
         username: foundUser.username,
         id: foundUser.id
       };
-      console.log(token);
-
-      console.log({ value: jwt.sign(token, JWT_SECRET) });
 
       return { value: jwt.sign(token, JWT_SECRET) };
     }
@@ -151,11 +148,11 @@ const server = new ApolloServer({
   resolvers,
   context: async ({ req }) => {
     const authorization = req ? req.headers.authorization : null;
-
     if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
       const decodedToken = jwt.verify(authorization.substring(7), JWT_SECRET);
       const currentUser = await User.findById(decodedToken.id);
-      console.log('AUTH: ===========, ', authorization);
+      console.log(currentUser);
+
       return { currentUser };
     }
   }

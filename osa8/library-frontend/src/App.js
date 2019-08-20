@@ -79,19 +79,6 @@ const ALL_GENRES = gql`
   }
 `;
 
-const BOOKS_IN_GENRE = gql`
-  query allBooks($genre: String! = "") {
-    allBooks(genre: $genre) {
-      title
-      author {
-        name
-      }
-      published
-      genres
-    }
-  }
-`;
-
 const SET_BORN_TO = gql`
   mutation editAuthor($name: String!, $born: Int!) {
     editAuthor(name: $name, setBornTo: $born) {
@@ -117,22 +104,17 @@ const App = () => {
 
   // QUERYS:
   const authorsq = useQuery(ALL_AUTHORS);
-
-  const addBook = useMutation(ADD_BOOK);
+  const allBooks = useQuery(ALL_BOOKS);
+  const addBook = useMutation(ADD_BOOK, {
+    refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_GENRES }, ALL_AUTHORS]
+  });
   const setBornTo = useMutation(SET_BORN_TO);
   const login = useMutation(LOGIN);
   const allGenresQ = useQuery(ALL_GENRES);
   const userInfo = useQuery(GET_USER);
-  console.log(userInfo);
 
   if (!localStorage.getItem('token'))
-    return (
-      <LoginForm
-        show={page === 'login'}
-        login={login}
-        setToken={token => setToken(token)}
-      />
-    );
+    return <LoginForm login={login} setToken={token => setToken(token)} />;
 
   return (
     <>
@@ -162,9 +144,10 @@ const App = () => {
 
         <Recommendations
           show={page === 'recommendations'}
-          booksQ={ALL_BOOKS}
+          booksQ={allBooks.data}
           allGenresData={allGenresQ}
           allGenres={ALL_GENRES}
+          userInfo={userInfo.data}
         />
 
         <NewBook show={page === 'add'} addBook={addBook} />

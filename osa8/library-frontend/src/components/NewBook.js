@@ -13,12 +13,9 @@ const NewBook = ({ show, addBook }) => {
 
   const submit = async e => {
     e.preventDefault();
-    let asd = await addBook[0]({
+    await addBook[0]({
       variables: { title, author, published: Number(published), genres }
     });
-    console.log(asd);
-
-    console.log('add book...');
 
     setTitle('');
     setPublished('');

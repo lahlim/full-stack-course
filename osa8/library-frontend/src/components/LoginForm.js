@@ -7,7 +7,7 @@ const LoginForm = props => {
 
   const handleLogin = async e => {
     e.preventDefault();
-    console.log('asd');
+
     try {
       const result = await props.login[0]({
         variables: {
@@ -16,11 +16,12 @@ const LoginForm = props => {
         }
       });
 
-      const token = result.data.login.value;
+      if (result) {
+        const token = result.data.login.value;
+        props.setToken(token);
+        localStorage.setItem('token', token);
+      }
 
-      props.setToken(token);
-
-      localStorage.setItem('token', token);
       setUsername('');
       setPassword('');
     } catch (error) {

@@ -1,29 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { useApolloClient } from 'react-apollo-hooks';
+import React from 'react';
 
-const Recommendations = ({ show, booksQ, allGenresData }) => {
-  const [books, setBooks] = useState([]);
-  const [bookstoShow, setBookstoShow] = useState([]);
-  const client = useApolloClient();
-
-  useEffect(() => {
-    client
-      .query({
-        query: booksQ
-      })
-      .then(res => setBooks(res.data.allBooks));
-    client
-      .query({
-        query: booksQ
-      })
-      .then(res => setBookstoShow(res.data.allBooks));
-  }, [booksQ, client]);
-
-  const filterByGenre = e => {
-    console.log(e.target.value);
-
-    setBookstoShow(books.filter(book => book.genres[0] === e.target.value));
-  };
+const Recommendations = ({ show, booksQ, allGenresData, userInfo }) => {
+  if (!userInfo || !booksQ) return <div>Loading</div>;
+  const books = booksQ.allBooks.filter(
+    book => book.genres[0] === userInfo.me.favoriteGenre
+  );
 
   if (!show) {
     return null;
@@ -42,7 +23,7 @@ const Recommendations = ({ show, booksQ, allGenresData }) => {
             <th>author</th>
             <th>published</th>
           </tr>
-          {bookstoShow.map(a => (
+          {books.map(a => (
             <tr key={a.title}>
               <td>{a.title}</td>
               <td>{a.author.name}</td>

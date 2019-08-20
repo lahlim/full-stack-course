@@ -17,12 +17,13 @@ const Authors = ({ show, data, setBornTo }) => {
 
   const submit = async e => {
     e.preventDefault();
-
-    console.log('VALUE: ');
-
-    await setBornTo[0]({
-      variables: { name: selectedOption.value, born: parseInt(born) }
-    });
+    try {
+      await setBornTo[0]({
+        variables: { name: selectedOption.value, born: parseInt(born) }
+      });
+    } catch (error) {
+      console.log('ERROR IN AGE CHANGE: ', error);
+    }
   };
 
   const options = authors.map(author => ({
