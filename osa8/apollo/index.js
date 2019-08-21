@@ -1,5 +1,7 @@
 require('dotenv').config();
 const { ApolloServer, gql, UserInputError } = require('apollo-server');
+const { PubSub } = require('apollo-server');
+const pubsub = new PubSub();
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const Author = require('./models/Author');
@@ -49,6 +51,10 @@ const typeDefs = gql`
     me: User
   }
 
+  type Subscription {
+    bookAdded: Book!
+  }
+
   type Mutation {
     addBook(
       title: String!
@@ -84,6 +90,7 @@ const resolvers = {
       if (oldAuthor) {
         const book = new Book({ ...args, author: oldAuthor });
         try {
+          pubsub.publish('BOOK_ADDED', { bookAdded: book });
           return book.save();
         } catch (error) {
           throw new UserInputError('Tarkista syötetyt tiedot');
@@ -93,6 +100,7 @@ const resolvers = {
         let savedAuthor = await newAuthor.save();
         const book = new Book({ ...args, author: savedAuthor });
         try {
+          pubsub.publish('BOOK_ADDED', { bookAdded: book });
           return book.save();
         } catch (error) {
           throw new UserInputError('Tarkista syötetyt tiedot');
@@ -140,6 +148,9 @@ const resolvers = {
 
       return { value: jwt.sign(token, JWT_SECRET) };
     }
+  },
+  Subscription: {
+    bookAdded: { subscribe: () => pubsub.asyncIterator(['BOOK_ADDED']) }
   }
 };
 
@@ -158,6 +169,7 @@ const server = new ApolloServer({
   }
 });
 
-server.listen().then(({ url }) => {
+server.listen().then(({ url, subscriptionsUrl }) => {
   console.log(`Server ready at ${url}`);
+  console.log(`Subscriptions ready at ${subscriptionsUrl}`);
 });
